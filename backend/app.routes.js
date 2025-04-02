@@ -58,4 +58,17 @@ router.get('/api/tasks', (req, res) => {
   res.json(Task.getAll());
 });
 
+router.put('/api/tasks/:id', (req, res) => {
+  const { id } = req.params;
+  const updatedTaskData = req.body;
+
+  const updatedTask = Task.updateTask(id, updatedTaskData);
+
+  if (!updatedTask) {
+    return res.status(404).json({ message: 'Task not found' });
+  }
+
+  res.json(updatedTask);
+});
+
 module.exports = router;

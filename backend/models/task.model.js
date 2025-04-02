@@ -24,19 +24,28 @@ class Task {
     this.title = title;
     this.description = description;
     this.dueDate = dueDate;
+    this.completed = false;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
+}
 
-  static create(taskData) {
+function create(taskData) {
     const newTask = new Task(taskData.title, taskData.description, taskData.dueDate);
     tasks.push(newTask);
     return newTask;
   }
 
-  static getAll() {
+  function getAll() {
     return tasks;
   }
-}
 
-module.exports = Task;
+  function updateTask(id, updatedData) {
+    const taskIndex = tasks.findIndex(task => task.id === Number(id));
+    if (taskIndex === -1) return null;
+
+    tasks[taskIndex] = { ...tasks[taskIndex], ...updatedData };
+    return tasks[taskIndex];
+  }
+
+module.exports = { Task, create, getAll, updateTask };
