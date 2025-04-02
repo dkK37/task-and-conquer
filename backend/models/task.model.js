@@ -14,6 +14,29 @@ taskSchema.statics.findIncomplete = function () {
 };
 
 // Create the model using the schema
-const Task = mongoose.model('Task', taskSchema);
+// const Task = mongoose.model('Task', taskSchema);
+
+// For testing without connection to DB: comment line above and uncomment block below
+let tasks = []; // Temporary in-memory array
+class Task {
+  constructor(title, description, dueDate) {
+    this.id = tasks.length + 1; // Simple auto-incrementing ID
+    this.title = title;
+    this.description = description;
+    this.dueDate = dueDate;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+
+  static create(taskData) {
+    const newTask = new Task(taskData.title, taskData.description, taskData.dueDate);
+    tasks.push(newTask);
+    return newTask;
+  }
+
+  static getAll() {
+    return tasks;
+  }
+}
 
 module.exports = Task;

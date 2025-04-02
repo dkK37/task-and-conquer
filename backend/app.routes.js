@@ -1,6 +1,7 @@
 // routes.js
 const express = require('express');
 const router = express.Router();
+const Task = require('./models/task.model');
 
 // A simple test route
 router.get('/', (req, res) => {
@@ -11,13 +12,50 @@ router.get('/api/status', (req, res) => {
   res.json({ message: 'Backend is running!' });
 });
 
-const tasks = [
-  { id: 1, name: 'Task 1', description: 'Description for task 1', dueDate: '2025-04-01' },
-  { id: 2, name: 'Task 2', description: 'Description for task 2', dueDate: '2025-04-02' },
-];
+// const tasks = [
+//   { id: 1, name: 'Task 1', description: 'Description for task 1', dueDate: '2025-04-01' },
+//   { id: 2, name: 'Task 2', description: 'Description for task 2', dueDate: '2025-04-02' },
+// ];
 
+// router.get('/api/tasks', (req, res) => {
+//   res.json({tasks});
+// });
+
+// // route to create task
+// router.post('/api/tasks', async (req, res) => {
+//   try {
+//     const { title, description, dueDate } = req.body;
+//     const task = new Task({
+//       title,
+//       description,
+//       dueDate,
+//     });
+
+//     await task.save();
+//     res.status(201).json(task); // Respond with task data
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
+
+// In lieu of DB connection, use below for local testing
+// Create a task
+router.post('/api/tasks', (req, res) => {
+  try {
+    const { title, description, dueDate } = req.body;
+    if (!title) {
+      return res.status(400).json({ message: 'Title is required' });
+    }
+    const newTask = Task.create({ title, description, dueDate });
+    res.status(201).json(newTask);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating task', error: error.message });
+  }
+});
+
+// Get all tasks
 router.get('/api/tasks', (req, res) => {
-  res.json({tasks});
+  res.json(Task.getAll());
 });
 
 module.exports = router;
