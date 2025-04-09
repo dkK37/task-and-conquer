@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('./models/task.model');
+// const { deleteTask } = require('./models/task.model');
 
 // A simple test route
 router.get('/', (req, res) => {
@@ -69,6 +70,15 @@ router.put('/api/tasks/:id', (req, res) => {
   }
 
   res.json(updatedTask);
+});
+
+router.delete('/api/tasks/:id', (req, res) => {
+  const success = Task.deleteTask(req.params.id);
+  if (success) {
+    res.status(200).json({ message: 'Task deleted successfully' });
+  } else {
+    res.status(404).json({ message: 'Task not found' });
+  }
 });
 
 module.exports = router;

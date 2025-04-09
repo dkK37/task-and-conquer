@@ -48,4 +48,18 @@ function create(taskData) {
     return tasks[taskIndex];
   }
 
-module.exports = { Task, create, getAll, updateTask };
+  function deleteTask(id) {
+    const taskIndex = tasks.findIndex(t => t.id === Number(id));
+    if (taskIndex !== -1) {
+      tasks.splice(taskIndex, 1);
+      return true;
+    }
+    return false;
+  }
+  
+  module.exports = {
+    create,
+    getAll,
+    updateTask,
+    deleteTask
+  };
