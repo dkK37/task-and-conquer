@@ -41,7 +41,7 @@ router.get('/api/status', (req, res) => {
 
 // In lieu of DB connection, use below for local testing
 // Create a task
-router.post('/api/tasks', (req, res) => {
+router.post('/tasks', (req, res) => {
   try {
     const { title, description, dueDate } = req.body;
     if (!title) {
@@ -55,11 +55,11 @@ router.post('/api/tasks', (req, res) => {
 });
 
 // Get all tasks
-router.get('/api/tasks', (req, res) => {
+router.get('/tasks', (req, res) => {
   res.json(Task.getAll());
 });
 
-router.put('/api/tasks/:id', (req, res) => {
+router.put('/tasks/:id', (req, res) => {
   const { id } = req.params;
   const updatedTaskData = req.body;
 
@@ -72,7 +72,7 @@ router.put('/api/tasks/:id', (req, res) => {
   res.json(updatedTask);
 });
 
-router.delete('/api/tasks/:id', (req, res) => {
+router.delete('/tasks/:id', (req, res) => {
   const success = Task.deleteTask(req.params.id);
   if (success) {
     res.status(200).json({ message: 'Task deleted successfully' });

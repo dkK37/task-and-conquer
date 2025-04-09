@@ -9,10 +9,10 @@ app.use(express.json());
 const appRoutes = require('./app.routes');
 
 // Use the imported routes
-app.use(appRoutes);
+app.use('/api', appRoutes);
 
 // Basic route
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.send('Server is running');
 });
 
