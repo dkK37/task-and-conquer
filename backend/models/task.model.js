@@ -18,6 +18,7 @@ taskSchema.statics.findIncomplete = function () {
 
 // For testing without connection to DB: comment line above and uncomment block below
 let tasks = []; // Temporary in-memory array
+
 class Task {
   constructor(title, description, dueDate) {
     this.id = tasks.length + 1; // Simple auto-incrementing ID

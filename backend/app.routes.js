@@ -2,14 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('./models/task.model');
-// const { deleteTask } = require('./models/task.model');
+const { validateTask } = require('./schemas/task.validation.schema'); 
 
 // A simple test route
 router.get('/', (req, res) => {
   res.send('Welcome to the Task & Conquer API!');
 });
 
-router.get('/api/status', (req, res) => {
+router.get('/status', (req, res) => {
   res.json({ message: 'Backend is running!' });
 });
 
@@ -41,16 +41,17 @@ router.get('/api/status', (req, res) => {
 
 // In lieu of DB connection, use below for local testing
 // Create a task
-router.post('/tasks', (req, res) => {
+router.post('/tasks', async (req, res) => {
+  const { error } = validateTask(req.body);
+  if (error) {
+    return res.status(400).json({ message: 'Validation error', error: error.details[0].message });
+  }
+
   try {
-    const { title, description, dueDate } = req.body;
-    if (!title) {
-      return res.status(400).json({ message: 'Title is required' });
-    }
-    const newTask = Task.create({ title, description, dueDate });
-    res.status(201).json(newTask);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating task', error: error.message });
+    const newTask = Task.create(req.body);
+    return res.status(201).json(newTask);
+  } catch (err) {
+    return res.status(500).json({ message: 'Error creating task', error: err.message });
   }
 });
 
@@ -59,17 +60,15 @@ router.get('/tasks', (req, res) => {
   res.json(Task.getAll());
 });
 
-router.put('/tasks/:id', (req, res) => {
-  const { id } = req.params;
-  const updatedTaskData = req.body;
-
-  const updatedTask = Task.updateTask(id, updatedTaskData);
-
-  if (!updatedTask) {
-    return res.status(404).json({ message: 'Task not found' });
-  }
-
-  res.json(updatedTask);
+router.put('/tasks/:id', validateTask, (req, res) => {
+  Task.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then(updatedTask => {
+      if (!updatedTask) {
+        return res.status(404).json({ message: 'Task not found' });
+      }
+      res.status(200).json(updatedTask);
+    })
+    .catch(err => res.status(500).json({ message: 'Error updating task', error: err }));
 });
 
 router.delete('/tasks/:id', (req, res) => {
