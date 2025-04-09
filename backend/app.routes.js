@@ -41,7 +41,7 @@ router.get('/status', (req, res) => {
 
 // In lieu of DB connection, use below for local testing
 // Create a task
-router.post('/tasks', async (req, res) => {
+router.post('/tasks', (req, res) => {
   const { error } = validateTask(req.body);
   if (error) {
     return res.status(400).json({ message: 'Validation error', error: error.details[0].message });
@@ -60,15 +60,22 @@ router.get('/tasks', (req, res) => {
   res.json(Task.getAll());
 });
 
-router.put('/tasks/:id', validateTask, (req, res) => {
-  Task.findByIdAndUpdate(req.params.id, req.body, { new: true })
-    .then(updatedTask => {
-      if (!updatedTask) {
-        return res.status(404).json({ message: 'Task not found' });
-      }
-      res.status(200).json(updatedTask);
-    })
-    .catch(err => res.status(500).json({ message: 'Error updating task', error: err }));
+router.put('/tasks/:id', (req, res) => {
+  const { error } = validateTask(req.body);
+  if (error) {
+    return res.status(400).json({ message: 'Validation error', error: error.details[0].message });
+  }
+
+  try {
+    let updatedTask = Task.updateTask(req.params.id, req.body);
+    if (!updatedTask) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    res.status(200).json(updatedTask);
+  }
+  catch(err) {
+    res.status(500).json({ message: 'Error updating task', error: err })
+  }
 });
 
 router.delete('/tasks/:id', (req, res) => {
