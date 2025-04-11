@@ -30,6 +30,6 @@ connectDB(uri).then(() => {
 });
 
 // Basic route
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.send('Server is running');
 });
