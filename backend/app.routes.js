@@ -13,34 +13,17 @@ router.get('/status', (req, res) => {
   res.json({ message: 'Backend is running!' });
 });
 
-// // route to create task
-// router.post('/tasks', async (req, res) => {
-//   try {
-//     const { title, description, dueDate } = req.body;
-//     const task = new Task({
-//       title,
-//       description,
-//       dueDate,
-//     });
-
-//     await task.save();
-//     res.status(201).json(task); // Respond with task data
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// In lieu of DB connection, use below for local testing
 // Create a task
-router.post('/tasks', (req, res) => {
-  const { error } = validateTask(req.body);
+router.post('/tasks', async (req, res) => {
+  const task = new Task(req.body);
+  const { error } = validateTask(task);
   if (error) {
     return res.status(400).json({ message: 'Validation error', error: error.details[0].message });
   }
 
   try {
-    const newTask = Task.create(req.body);
-    return res.status(201).json(newTask);
+    const savedTask = await task.save();
+    return res.status(201).json(savedTask);
   } catch (err) {
     return res.status(500).json({ message: 'Error creating task', error: err.message });
   }
