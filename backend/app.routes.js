@@ -20,8 +20,8 @@ router.post('/tasks', async (req, res) => {
     return res.status(400).json({ message: 'Validation error', error: error.details[0].message });
   }
 
-  const task = new Task(req.body);
   try {
+    let task = new Task(req.body);
     const savedTask = await task.save();
     return res.status(201).json(savedTask);
   } catch (err) {
