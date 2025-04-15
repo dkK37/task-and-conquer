@@ -30,9 +30,25 @@ router.post('/tasks', async (req, res) => {
 });
 
 // Get all tasks
-router.get('/tasks', (req, res) => {
-  res.json(Task.getAll());
+router.get('/tasks', async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching tasks', error: err });
+  }
 });
+
+// GET task by id
+router.get('/tasks/:id', async (req,res) => {
+  try {
+    const task = await Task.findById(res.params.id);
+    if (!task) return res.status(404).json({ message: 'Task not found'});
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching task', error: err});
+  }
+})
 
 router.put('/tasks/:id', (req, res) => {
   const { error } = validateTask(req.body);
