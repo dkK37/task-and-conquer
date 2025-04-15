@@ -1,7 +1,7 @@
 // routes.js
 const express = require('express');
 const router = express.Router();
-const Task = require('./models/task.model');
+const { Task, create, getAll, updateTask, deleteTask } = require('./models/task.model');
 const { validateTask } = require('./schemas/task.validation.schema'); 
 
 // A simple test route
@@ -15,12 +15,12 @@ router.get('/status', (req, res) => {
 
 // Create a task
 router.post('/tasks', async (req, res) => {
-  const task = new Task(req.body);
-  const { error } = validateTask(task);
+  const { error } = validateTask(req.body);
   if (error) {
     return res.status(400).json({ message: 'Validation error', error: error.details[0].message });
   }
 
+  const task = new Task(req.body);
   try {
     const savedTask = await task.save();
     return res.status(201).json(savedTask);

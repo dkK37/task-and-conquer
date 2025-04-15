@@ -15,6 +15,7 @@ taskSchema.statics.findIncomplete = function () {
 
 // Create the model using the schema
 const Task = mongoose.model('Task', taskSchema);
+// module.exports = Task;
 
 function create(taskData) {
   const newTask = new Task(taskData.title, taskData.description, taskData.dueDate);
