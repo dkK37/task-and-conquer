@@ -9,11 +9,7 @@ router.get('/', (req, res) => {
   res.send('Welcome to the Task & Conquer API!');
 });
 
-router.get('/status', (req, res) => {
-  res.json({ message: 'Backend is running!' });
-});
-
-// Create a task
+// POST Create a new task
 router.post('/tasks', async (req, res) => {
   const { error } = validateTask(req.body);
   if (error) {
@@ -29,7 +25,7 @@ router.post('/tasks', async (req, res) => {
   }
 });
 
-// Get all tasks
+// GET all tasks 
 router.get('/tasks', async (req, res) => {
   try {
     const tasks = await Task.find();
@@ -39,8 +35,9 @@ router.get('/tasks', async (req, res) => {
   }
 });
 
-// GET task by id
+// GET single task by id
 router.get('/tasks/:id', async (req,res) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ message: 'Invalid ID format' });
   try {
     const task = await Task.findById(res.params.id);
     if (!task) return res.status(404).json({ message: 'Task not found'});
@@ -50,6 +47,7 @@ router.get('/tasks/:id', async (req,res) => {
   }
 })
 
+// PUT update single task
 router.put('/tasks/:id', (req, res) => {
   const { error } = validateTask(req.body);
   if (error) {
@@ -68,6 +66,7 @@ router.put('/tasks/:id', (req, res) => {
   }
 });
 
+// DELETE single task
 router.delete('/tasks/:id', (req, res) => {
   const success = Task.deleteTask(req.params.id);
   if (success) {
