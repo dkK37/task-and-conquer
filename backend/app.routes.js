@@ -53,7 +53,6 @@ router.put('/tasks/:id', (req, res) => {
   if (error) {
     return res.status(400).json({ message: 'Validation error', error: error.details[0].message });
   }
-
   try {
     let updatedTask = Task.updateTask(req.params.id, req.body);
     if (!updatedTask) {
@@ -67,12 +66,16 @@ router.put('/tasks/:id', (req, res) => {
 });
 
 // DELETE single task
-router.delete('/tasks/:id', (req, res) => {
-  const success = Task.deleteTask(req.params.id);
-  if (success) {
-    res.status(200).json({ message: 'Task deleted successfully' });
-  } else {
-    res.status(404).json({ message: 'Task not found' });
+router.delete('/tasks/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedTask = await Task.findByIdAndDelete(id);    
+    if (!deletedTask) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    res.json({ message: 'Task deleted successfully', task: deletedTask });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting task', error: err.message });
   }
 });
 
